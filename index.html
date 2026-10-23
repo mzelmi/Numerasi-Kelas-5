@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SD NEGERI MIAWA - Kelas 5B | PJJ Numerasi Pintar</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fredoka & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <!-- html2canvas for taking screenshots -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#3B82F6',
+                            yellow: '#F59E0B',
+                            green: '#10B981',
+                            purple: '#8B5CF6',
+                            pink: '#EC4899',
+                            orange: '#F97316'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Fredoka', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F3F4F6;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .font-display {
+            font-family: 'Fredoka', cursive;
+        }
+        /* Custom Scrollbar for mobile UX */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F1F1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 10px;
+        }
+        /* Bounce Animation */
+        @keyframes gentle-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .animate-bounce-gentle {
+            animation: gentle-bounce 2s infinite;
+        }
+        .card-shadow {
+            box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+        }
+        /* Visual Feedback Animations for Game */
+        @keyframes correct-pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+        @keyframes wrong-shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .anim-correct {
+            animation: correct-pop 0.3s ease-in-out;
+        }
+        .anim-wrong {
+            animation: wrong-shake 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col justify-between select-none">
+
+    <!-- Top Mobile Navigation Header -->
+    <header class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="bg-white/20 p-2 rounded-xl backdrop-blur-sm">
+                    <i class="fa-solid fa-calculator text-xl text-yellow-300"></i>
+                </div>
+                <div>
+                    <h1 class="font-display text-base font-bold leading-tight text-yellow-300">SD NEGERI MIAWA</h1>
+                    <p class="text-xs text-blue-100 font-semibold">Kelas 5B • PJJ Numerasi</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+                <!-- Sound Toggle Button -->
+                <button id="btn-toggle-sound" onclick="toggleSound()" class="bg-blue-700/60 border border-blue-400/30 w-8 h-8 rounded-full flex items-center justify-center hover:bg-blue-700 transition-all text-yellow-300" title="Suara Musik / Efek">
+                    <i id="icon-sound" class="fa-solid fa-volume-high text-xs"></i>
+                </button>
+
+                <!-- Profile / Points Stats -->
+                <div class="bg-blue-700/60 border border-blue-400/30 rounded-full px-3 py-1 flex items-center space-x-2">
+                    <i class="fa-solid fa-star text-yellow-400 text-sm"></i>
+                    <span id="user-score" class="font-bold text-sm">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Mobile Container -->
+    <main class="max-w-md mx-auto w-full flex-grow p-4 space-y-4 pb-24">
+
+        <!-- Banner / Greeting -->
+        <section id="welcome-banner" class="bg-gradient-to-r from-amber-400 to-orange-500 rounded-2xl p-4 text-white card-shadow relative overflow-hidden">
+            <div class="relative z-10">
+                <span class="bg-white/20 text-xs px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider">Selamat Datang!</span>
+                <h2 class="font-display text-xl font-bold mt-1">Halo, Sahabat Matematika! 👋</h2>
+                <p class="text-xs text-amber-50 mt-1">Siap belajar numerasi dengan seru dan mudah hari ini?</p>
+            </div>
+            <i class="fa-solid fa-calculator absolute -right-3 -bottom-3 text-7xl text-white/20 transform -rotate-12"></i>
+        </section>
+
+        <!-- VIEW 1: HOME DASHBOARD -->
+        <div id="view-home" class="space-y-4">
+            <!-- Menu Grid -->
+            <h3 class="font-display font-bold text-slate-700 text-base flex items-center gap-2">
+                <i class="fa-solid fa-shapes text-blue-500"></i> Pilih Menu Pembelajaran
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <!-- Card 1: Materi -->
+                <button onclick="switchTab('materi')" class="bg-white p-4 rounded-2xl border-2 border-blue-100 text-left hover:border-blue-400 active:scale-95 transition-all card-shadow flex flex-col justify-between group">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-display font-bold text-slate-800">Modul Materi</h4>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Penjumlahan, Pengurangan & Perkalian</p>
+                    </div>
+                </button>
+
+                <!-- Card 2: Kuis Interaktif -->
+                <button onclick="switchTab('kuis')" class="bg-white p-4 rounded-2xl border-2 border-green-100 text-left hover:border-green-400 active:scale-95 transition-all card-shadow flex flex-col justify-between group">
+                    <div class="w-12 h-12 rounded-xl bg-green-100 text-green-600 flex items-center justify-center text-2xl mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-pen-ruler"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-display font-bold text-slate-800">Latihan Soal</h4>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Uji kemampuan berhitung (10 Soal)</p>
+                    </div>
+                </button>
+
+                <!-- Card 3: Game Numerasi -->
+                <button onclick="switchTab('game')" class="bg-white p-4 rounded-2xl border-2 border-purple-100 text-left hover:border-purple-400 active:scale-95 transition-all card-shadow flex flex-col justify-between group">
+                    <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-display font-bold text-slate-800">Tantangan Cepat</h4>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Uji Kecepatan Berhitung</p>
+                    </div>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- VIEW 2: MODUL MATERI -->
+        <div id="view-materi" class="space-y-4 hidden">
+            <div class="flex justify-between items-center">
+                <h3 class="font-display font-bold text-slate-800 text-lg">Modul Pembelajaran</h3>
+                <span class="text-xs text-slate-500">Kelas 5 SD / Fase C</span>
+            </div>
+
+            <!-- Accordion / List Materi -->
+            <div class="space-y-3">
+                <!-- Materi 1: Penjumlahan 4 Angka -->
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden card-shadow">
+                    <button onclick="toggleMateri('m1')" class="w-full p-4 text-left flex justify-between items-center bg-blue-50/50 hover:bg-blue-50 transition-colors">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-8 h-8 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center text-sm">1</span>
+                            <div>
+                                <h4 class="font-display font-bold text-slate-800">Penjumlahan 4 Angka (Ribuan)</h4>
+                                <p class="text-xs text-slate-500">Teknik bersusun & contoh soal cerita</p>
+                            </div>
+                        </div>
+                        <i id="icon-m1" class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+                    </button>
+                    <div id="m1" class="p-4 border-t border-slate-100 hidden space-y-3 text-sm text-slate-600 bg-white">
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded-r-lg text-xs text-blue-900">
+                            <strong>Langkah Utama:</strong> Sejajarkan nilai tempat (Satuan, Puluhan, Ratusan, Ribuan) dari kanan ke kiri. Jangan lupa simpan angka jika hasilnya 10 atau lebih!
+                        </div>
+                        <p class="font-medium">Hitungan Bersusun: <span class="text-blue-700 font-bold">2.548 + 1.635</span></p>
+                        <div class="bg-slate-900 text-emerald-400 p-3 rounded-xl text-center font-mono text-sm leading-relaxed tracking-widest shadow-inner">
+                            &nbsp;&nbsp;2.548<br>
+                            + 1.635<br>
+                            ------<br>
+                            &nbsp;&nbsp;4.183
+                        </div>
+                        
+                        <!-- Contoh Soal Cerita -->
+                        <div class="mt-3 bg-amber-50/80 border border-amber-200 p-3 rounded-xl space-y-2">
+                            <span class="font-display font-bold text-xs text-amber-800 flex items-center gap-1.5">
+                                <i class="fa-solid fa-book-open-reader text-amber-600"></i> Contoh Soal Cerita:
+                            </span>
+                            <p class="text-xs text-slate-700 leading-relaxed italic">
+                                "Pak Budi memanen 3.450 kg padi dari sawah pertama dan 2.875 kg dari sawah kedua. Berapa kg jumlah seluruh hasil panen Pak Budi?"
+                            </p>
+                            <div class="bg-white p-2.5 rounded-lg border border-amber-100 text-xs space-y-1">
+                                <p class="font-semibold text-slate-700">📌 Pembahasan:</p>
+                                <p>• Diketahui: Sawah I = 3.450 kg, Sawah II = 2.875 kg</p>
+                                <p>• Ditanya: Jumlah seluruh panen (Ditambahkan)</p>
+                                <p class="text-blue-600 font-mono font-bold mt-1">3.450 + 2.875 = 6.325 kg</p>
+                                <p class="text-emerald-700 font-medium">Jadi, total panen Pak Budi adalah 6.325 kg.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Materi 2: Pengurangan 4 Angka -->
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden card-shadow">
+                    <button onclick="toggleMateri('m2')" class="w-full p-4 text-left flex justify-between items-center bg-green-50/50 hover:bg-green-50 transition-colors">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-8 h-8 rounded-full bg-green-500 text-white font-bold flex items-center justify-center text-sm">2</span>
+                            <div>
+                                <h4 class="font-display font-bold text-slate-800">Pengurangan 4 Angka</h4>
+                                <p class="text-xs text-slate-500">Teknik meminjam & contoh soal cerita</p>
+                            </div>
+                        </div>
+                        <i id="icon-m2" class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+                    </button>
+                    <div id="m2" class="p-4 border-t border-slate-100 hidden space-y-3 text-sm text-slate-600 bg-white">
+                        <div class="bg-green-50 border-l-4 border-green-500 p-3 rounded-r-lg text-xs text-green-900">
+                            <strong>Konsep Meminjam:</strong> Jika angka atas lebih kecil dari angka bawah, pinjam 1 dari nilai tempat di sebelahnya (bernilai 10).
+                        </div>
+                        <p class="font-medium">Hitungan Bersusun: <span class="text-green-700 font-bold">5.324 - 2.158</span></p>
+                        <div class="bg-slate-900 text-emerald-400 p-3 rounded-xl text-center font-mono text-sm leading-relaxed tracking-widest shadow-inner">
+                            &nbsp;&nbsp;5.324<br>
+                            - 2.158<br>
+                            ------<br>
+                            &nbsp;&nbsp;3.166
+                        </div>
+
+                        <!-- Contoh Soal Cerita -->
+                        <div class="mt-3 bg-amber-50/80 border border-amber-200 p-3 rounded-xl space-y-2">
+                            <span class="font-display font-bold text-xs text-amber-800 flex items-center gap-1.5">
+                                <i class="fa-solid fa-book-open-reader text-amber-600"></i> Contoh Soal Cerita:
+                            </span>
+                            <p class="text-xs text-slate-700 leading-relaxed italic">
+                                "Ahmad memiliki tabungan sebesar Rp 9.500. Ia membeli buku pelajaran seharga Rp 4.250. Berapa sisa uang tabungan Ahmad?"
+                            </p>
+                            <div class="bg-white p-2.5 rounded-lg border border-amber-100 text-xs space-y-1">
+                                <p class="font-semibold text-slate-700">📌 Pembahasan:</p>
+                                <p>• Uang awal: Rp 9.500</p>
+                                <p>• Dibelikan buku: Rp 4.250 (Dikurangi)</p>
+                                <p class="text-green-600 font-mono font-bold mt-1">9.500 - 4.250 = 5.250</p>
+                                <p class="text-emerald-700 font-medium">Jadi, sisa uang tabungan Ahmad adalah Rp 5.250.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Materi 3: Perkalian sampai 2 Angka -->
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden card-shadow">
+                    <button onclick="toggleMateri('m3')" class="w-full p-4 text-left flex justify-between items-center bg-purple-50/50 hover:bg-purple-50 transition-colors">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-8 h-8 rounded-full bg-purple-500 text-white font-bold flex items-center justify-center text-sm">3</span>
+                            <div>
+                                <h4 class="font-display font-bold text-slate-800">Perkalian Sampai 2 Angka</h4>
+                                <p class="text-xs text-slate-500">Perkalian bersusun & contoh soal cerita</p>
+                            </div>
+                        </div>
+                        <i id="icon-m3" class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+                    </button>
+                    <div id="m3" class="p-4 border-t border-slate-100 hidden space-y-3 text-sm text-slate-600 bg-white">
+                        <div class="bg-purple-50 border-l-4 border-purple-500 p-3 rounded-r-lg text-xs text-purple-900">
+                            <strong>Perkalian Bersusun:</strong> Kalikan angka atas dengan satuan terlebih dahulu, lalu dengan puluhan. Geser hasil perkalian puluhan 1 langkah ke kiri!
+                        </div>
+                        <p class="font-medium">Hitungan Bersusun: <span class="text-purple-700 font-bold">48 x 25</span></p>
+                        <div class="bg-slate-900 text-emerald-400 p-3 rounded-xl text-center font-mono text-sm leading-relaxed tracking-widest shadow-inner">
+                            &nbsp;&nbsp;&nbsp;&nbsp;48<br>
+                            x&nbsp;&nbsp;25<br>
+                            ------<br>
+                            &nbsp;&nbsp;&nbsp;240 &nbsp;&nbsp;(48 x 5)<br>
+                            + 96&nbsp;&nbsp;&nbsp;&nbsp;(48 x 2)<br>
+                            ------<br>
+                            &nbsp;&nbsp;1200
+                        </div>
+
+                        <!-- Contoh Soal Cerita -->
+                        <div class="mt-3 bg-amber-50/80 border border-amber-200 p-3 rounded-xl space-y-2">
+                            <span class="font-display font-bold text-xs text-amber-800 flex items-center gap-1.5">
+                                <i class="fa-solid fa-book-open-reader text-amber-600"></i> Contoh Soal Cerita:
+                            </span>
+                            <p class="text-xs text-slate-700 leading-relaxed italic">
+                                "Sebuah bus antarkota dapat memuat 45 penumpang. Jika ada 15 bus yang berangkat penuh, berapa total seluruh penumpang?"
+                            </p>
+                            <div class="bg-white p-2.5 rounded-lg border border-amber-100 text-xs space-y-1">
+                                <p class="font-semibold text-slate-700">📌 Pembahasan:</p>
+                                <p>• 1 bus = 45 penumpang</p>
+                                <p>• Total 15 bus = 45 x 15 (Dikalikan)</p>
+                                <p class="text-purple-600 font-mono font-bold mt-1">45 x 15 = 675</p>
+                                <p class="text-emerald-700 font-medium">Jadi, total seluruh penumpang adalah 675 orang.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 3: KUIS / LATIHAN SOAL -->
+        <div id="view-kuis" class="space-y-4 hidden">
+            <!-- Header Kuis -->
+            <div id="quiz-header" class="bg-white p-4 rounded-2xl card-shadow border border-slate-100 flex justify-between items-center">
+                <div>
+                    <span class="text-xs text-slate-400 font-semibold block uppercase">Latihan Numerasi (10 Soal)</span>
+                    <span id="quiz-progress-text" class="font-display font-bold text-slate-800 text-sm">Soal 1 dari 10</span>
+                </div>
+                <div class="w-20 bg-slate-100 rounded-full h-2">
+                    <div id="quiz-progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 10%;"></div>
+                </div>
+            </div>
+
+            <!-- Card Soal -->
+            <div id="quiz-card" class="bg-white rounded-2xl p-5 card-shadow border border-slate-100 space-y-4">
+                <div id="quiz-question" class="font-display text-base font-semibold text-slate-800 leading-relaxed">
+                    Loading soal...
+                </div>
+
+                <!-- Pilihan Jawaban -->
+                <div id="quiz-options" class="space-y-2.5">
+                    <!-- Dynamic Options -->
+                </div>
+
+                <!-- Feedback Area -->
+                <div id="quiz-feedback" class="hidden p-3 rounded-xl text-xs font-medium border"></div>
+
+                <!-- Tombol Lanjut -->
+                <button id="btn-next-quiz" onclick="nextQuestion()" class="hidden w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-display font-bold shadow-lg shadow-blue-500/30 transition-all active:scale-95">
+                    Soal Berikutnya <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+
+            <!-- Quiz Result View (Hidden Initially) -->
+            <div id="quiz-result" class="hidden bg-white rounded-2xl p-6 card-shadow text-center space-y-4">
+                <div id="quiz-result-capture" class="bg-white p-4 rounded-xl space-y-3">
+                    <div class="w-16 h-16 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-3xl mx-auto animate-bounce-gentle">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-display font-bold text-xl text-slate-800">Hebat! Kuis Selesai!</h3>
+                        <p class="text-xs text-slate-500">Hasil Latihan Numerasi Kelas 5 SD</p>
+                    </div>
+                    
+                    <div class="bg-slate-50 p-4 rounded-xl flex justify-around items-center border border-slate-100">
+                        <div>
+                            <span class="text-xs text-slate-400 block font-medium">Skor Kamu</span>
+                            <span id="final-score" class="font-display font-bold text-2xl text-blue-600">0</span>
+                        </div>
+                        <div class="h-8 w-px bg-slate-200"></div>
+                        <div>
+                            <span class="text-xs text-slate-400 block font-medium">Jawaban Benar</span>
+                            <span id="final-correct" class="font-display font-bold text-2xl text-emerald-600">0/10</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Nama Siswa untuk Laporan WA -->
+                <div class="text-left space-y-1">
+                    <label for="student-name" class="text-xs font-semibold text-slate-600 block">Nama Siswa:</label>
+                    <input type="text" id="student-name" placeholder="Masukkan nama lengkapmu..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <!-- Action Buttons: Screenshot & WhatsApp -->
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="downloadQuizScreenshot()" class="py-2.5 bg-slate-800 text-white rounded-xl font-display font-bold text-xs shadow-md hover:bg-slate-900 active:scale-95 transition-all flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-camera text-yellow-400"></i> Simpan Gambar
+                    </button>
+                    <button onclick="sendQuizToWhatsApp()" class="py-2.5 bg-emerald-600 text-white rounded-xl font-display font-bold text-xs shadow-md hover:bg-emerald-700 active:scale-95 transition-all flex items-center justify-center gap-1.5">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> Kirim ke WA
+                    </button>
+                </div>
+
+                <button onclick="restartQuiz()" class="w-full py-2.5 bg-blue-600 text-white rounded-xl font-display font-bold text-xs shadow-md hover:bg-blue-700 active:scale-95 transition-all">
+                    Ulangi Kuis <i class="fa-solid fa-rotate-right ml-1"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW 4: MINI GAME NUMERASI -->
+        <div id="view-game" class="space-y-4 hidden">
+            <div class="bg-white p-4 rounded-2xl card-shadow border border-slate-100 space-y-3">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-display font-bold text-slate-800">Tantangan Cepat</h3>
+                    <span id="game-timer" class="text-xs font-bold bg-red-100 text-red-600 px-2.5 py-1 rounded-full">Waktu: 20s</span>
+                </div>
+
+                <p id="game-mode-desc" class="text-xs text-slate-500">Pilih jawaban hasil perkalian dengan cepat dan tepat!</p>
+
+                <!-- Dynamic Game Question Area -->
+                <div id="game-question-box" class="bg-purple-900 text-yellow-300 rounded-xl p-4 text-center font-display text-2xl font-bold shadow-inner transition-all duration-200">
+                    Tekan Mulai!
+                </div>
+
+                <!-- Game Board / Answer Options -->
+                <div id="game-board" class="grid grid-cols-2 gap-3 my-2">
+                    <!-- Dynamic Buttons -->
+                </div>
+
+                <div class="flex justify-between items-center text-xs pt-2">
+                    <span class="text-slate-500">Skor Game: <strong id="game-points" class="text-purple-600 font-bold">0</strong></span>
+                    <button id="btn-start-game" onclick="startGame()" class="px-4 py-2 bg-purple-600 text-white rounded-xl font-display font-bold text-xs shadow-md hover:bg-purple-700 active:scale-95 transition-all">
+                        <i class="fa-solid fa-play mr-1"></i> Mulai Game
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Navigation Bar for Mobile -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50">
+        <div class="max-w-md mx-auto grid grid-cols-3 py-2 px-1">
+            <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center justify-center py-1 text-blue-600 transition-colors">
+                <i class="fa-solid fa-house text-lg"></i>
+                <span class="text-[10px] font-medium mt-0.5">Beranda</span>
+            </button>
+            <button onclick="switchTab('materi')" id="nav-materi" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-blue-600 transition-colors">
+                <i class="fa-solid fa-book text-lg"></i>
+                <span class="text-[10px] font-medium mt-0.5">Materi</span>
+            </button>
+            <button onclick="switchTab('kuis')" id="nav-kuis" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-blue-600 transition-colors">
+                <i class="fa-solid fa-pen text-lg"></i>
+                <span class="text-[10px] font-medium mt-0.5">Kuis</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // State Management
+        let state = {
+            score: 0,
+            completedQuestions: 0,
+            currentQuizIndex: 0,
+            quizScore: 0,
+            correctCount: 0,
+            gameActive: false,
+            gameScore: 0,
+            gameTimer: 20,
+            gameInterval: null,
+            currentCorrectGameAns: 0,
+            soundEnabled: true
+        };
+
+        // --- WEB AUDIO API SOUND GENERATOR ---
+        // Generates sound synthesis on demand without downloading MP3s
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) {
+                    audioCtx = new AudioContext();
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playSound(type) {
+            if (!state.soundEnabled) return;
+
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                const now = ctx.currentTime;
+
+                if (type === 'click') {
+                    // Soft subtle click sound
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.exponentialRampToValueAtTime(200, now + 0.05);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'correct') {
+                    // Happy arpeggio chord (C5 - E5 - G5 - C6)
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, idx) => {
+                        const noteOsc = ctx.createOscillator();
+                        const noteGain = ctx.createGain();
+                        noteOsc.connect(noteGain);
+                        noteGain.connect(ctx.destination);
+
+                        noteOsc.type = 'triangle';
+                        noteOsc.frequency.setValueAtTime(freq, now + idx * 0.08);
+
+                        noteGain.gain.setValueAtTime(0, now + idx * 0.08);
+                        noteGain.gain.linearRampToValueAtTime(0.2, now + idx * 0.08 + 0.02);
+                        noteGain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.25);
+
+                        noteOsc.start(now + idx * 0.08);
+                        noteOsc.stop(now + idx * 0.08 + 0.25);
+                    });
+                } else if (type === 'wrong') {
+                    // Playful downward buzz sound
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.exponentialRampToValueAtTime(110, now + 0.25);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'fanfare') {
+                    // Victory sound for completion
+                    const fanfareNotes = [
+                        { f: 523.25, t: 0.0 },  // C5
+                        { f: 659.25, t: 0.12 }, // E5
+                        { f: 783.99, t: 0.24 }, // G5
+                        { f: 1046.50, t: 0.36 },// C6
+                        { f: 880.00, t: 0.52 }, // A5
+                        { f: 1046.50, t: 0.68 } // C6
+                    ];
+                    fanfareNotes.forEach(note => {
+                        const fOsc = ctx.createOscillator();
+                        const fGain = ctx.createGain();
+                        fOsc.connect(fGain);
+                        fGain.connect(ctx.destination);
+
+                        fOsc.type = 'triangle';
+                        fOsc.frequency.setValueAtTime(note.f, now + note.t);
+
+                        fGain.gain.setValueAtTime(0.2, now + note.t);
+                        fGain.gain.exponentialRampToValueAtTime(0.001, now + note.t + 0.3);
+
+                        fOsc.start(now + note.t);
+                        fOsc.stop(now + note.t + 0.3);
+                    });
+                }
+            } catch (e) {
+                console.log('Audio playback error:', e);
+            }
+        }
+
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            const icon = document.getElementById('icon-sound');
+            const btn = document.getElementById('btn-toggle-sound');
+
+            if (state.soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-xs';
+                btn.classList.remove('opacity-50');
+                playSound('click');
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-xs';
+                btn.classList.add('opacity-50');
+            }
+        }
+
+        // Data 10 Soal Numerasi Kelas 5 SD
+        const quizData = [
+            // Soal Hitungan Direct 1
+            {
+                question: "[Soal Hitung] Berapakah hasil dari 3.425 + 2.153 ?",
+                options: ["5.578", "5.568", "5.478", "5.678"],
+                correct: 0,
+                explanation: "Gunakan penjumlahan bersusun dari kanan ke kiri: 3.425 + 2.153 = 5.578."
+            },
+            // Soal Cerita 1 (Pengurangan)
+            {
+                question: "📖 [Soal Cerita] Ibu Siska memiliki uang Rp 8.750 di tabungannya. Hari ini Ibu membeli bahan makanan seharga Rp 4.320. Berapakah sisa uang tabungan Ibu Siska sekarang?",
+                options: ["Rp 4.410", "Rp 4.430", "Rp 4.330", "Rp 4.530"],
+                correct: 1,
+                explanation: "Pengurangan 4 angka: Rp 8.750 - Rp 4.320 = Rp 4.430."
+            },
+            // Soal Hitungan Direct 2
+            {
+                question: "[Soal Hitung] Hasil dari perkalian 34 x 12 adalah...",
+                options: ["398", "408", "418", "428"],
+                correct: 1,
+                explanation: "Kalikan bersusun: (34 x 2 = 68) ditambah (34 x 10 = 340). Total = 68 + 340 = 408."
+            },
+            // Soal Cerita 2 (Pengurangan)
+            {
+                question: "📖 [Soal Cerita] Pak Budi memanen 6.240 kg padi dari sawahnya. Sebanyak 2.515 kg telah dijual ke pasar. Berapa kg sisa padi yang belum dijual Pak Budi?",
+                options: ["3.725 kg", "3.625 kg", "3.735 kg", "3.825 kg"],
+                correct: 0,
+                explanation: "Pengurangan dengan teknik meminjam: 6.240 - 2.515 = 3.725 kg."
+            },
+            // Soal Cerita 3 (Penjumlahan)
+            {
+                question: "📖 [Soal Cerita] Perpustakaan sekolah menerima sumbangan 2.450 buku cerita dan 1.835 buku pelajaran. Berapa jumlah seluruh buku sumbangan yang diterima perpustakaan?",
+                options: ["4.275 buku", "4.285 buku", "4.185 buku", "4.385 buku"],
+                correct: 1,
+                explanation: "Penjumlahan bersusun 4 angka dengan menyimpan: 2.450 + 1.835 = 4.285 buku."
+            },
+            // Soal Hitungan Direct 3
+            {
+                question: "[Soal Hitung] Berapakah hasil dari 7.820 - 3.465 ?",
+                options: ["4.355", "4.365", "4.455", "4.255"],
+                correct: 0,
+                explanation: "Pengurangan bersusun dengan meminjam: 7.820 - 3.465 = 4.355."
+            },
+            // Soal Cerita 4 (Penjumlahan)
+            {
+                question: "📖 [Soal Cerita] Panitia bantuan bencana mengumpulkan 4.350 paket beras dari warga kota A dan 3.825 paket beras dari warga kota B. Berapa total paket beras yang berhasil dikumpulkan?",
+                options: ["8.165 paket", "8.175 paket", "8.275 paket", "8.075 paket"],
+                correct: 1,
+                explanation: "Penjumlahan bersusun dengan teknik menyimpan: 4.350 + 3.825 = 8.175 paket."
+            },
+            // Soal Hitungan Direct 4
+            {
+                question: "[Soal Hitung] Hasil dari 56 x 24 adalah...",
+                options: ["1.334", "1.344", "1.244", "1.354"],
+                correct: 1,
+                explanation: "Perkalian bersusun: 56 x 4 = 224, 56 x 20 = 1120. Hasil = 224 + 1120 = 1.344."
+            },
+            // Soal Cerita 5 (Penjumlahan)
+            {
+                question: "📖 [Soal Cerita] Sebuah toko kelontong membeli 1.580 botol minyak goreng pada minggu pertama dan 2.640 botol pada minggu kedua. Berapa total botol minyak goreng yang dibeli toko tersebut?",
+                options: ["4.220 botol", "4.120 botol", "4.230 botol", "4.320 botol"],
+                correct: 0,
+                explanation: "Penjumlahan 4 angka: 1.580 + 2.640 = 4.220 botol."
+            },
+            // Soal Hitungan Direct 5
+            {
+                question: "[Soal Hitung] Berapakah hasil dari 1.845 + 4.678 ?",
+                options: ["6.423", "6.513", "6.523", "6.623"],
+                correct: 2,
+                explanation: "Penjumlahan bersusun: 1.845 + 4.678 = 6.523."
+            }
+        ];
+
+        // Navigation Controller
+        function switchTab(tabName) {
+            playSound('click');
+            
+            // Hide all views
+            ['home', 'materi', 'kuis', 'game'].forEach(view => {
+                const el = document.getElementById(`view-${view}`);
+                if (el) el.classList.add('hidden');
+            });
+
+            // Reset Navigation Icons Color
+            ['home', 'materi', 'kuis'].forEach(nav => {
+                const navEl = document.getElementById(`nav-${nav}`);
+                if (navEl) {
+                    navEl.classList.remove('text-blue-600');
+                    navEl.classList.add('text-slate-400');
+                }
+            });
+
+            // Show Active View
+            const activeView = document.getElementById(`view-${tabName}`);
+            if (activeView) activeView.classList.remove('hidden');
+
+            // Highlight Active Nav Button
+            const activeNav = document.getElementById(`nav-${tabName}`);
+            if (activeNav) {
+                activeNav.classList.remove('text-slate-400');
+                activeNav.classList.add('text-blue-600');
+            }
+
+            // Trigger specific view logic
+            if (tabName === 'kuis' && state.currentQuizIndex === 0) {
+                loadQuestion();
+            }
+        }
+
+        // Toggle Accordion Materi
+        function toggleMateri(id) {
+            playSound('click');
+            const content = document.getElementById(id);
+            const icon = document.getElementById(`icon-${id}`);
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            }
+        }
+
+        // --- KUIS INTERAKTIF LOGIC ---
+        function loadQuestion() {
+            const current = quizData[state.currentQuizIndex];
+            document.getElementById('quiz-question').innerText = current.question;
+            
+            // Progress Update
+            document.getElementById('quiz-progress-text').innerText = `Soal ${state.currentQuizIndex + 1} dari ${quizData.length}`;
+            document.getElementById('quiz-progress-bar').style.width = `${((state.currentQuizIndex + 1) / quizData.length) * 100}%`;
+
+            // Reset UI
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            
+            const feedbackEl = document.getElementById('quiz-feedback');
+            feedbackEl.classList.add('hidden');
+            
+            document.getElementById('btn-next-quiz').classList.add('hidden');
+
+            // Generate Options Buttons
+            current.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full p-3 text-left rounded-xl border border-slate-200 font-medium text-sm hover:bg-slate-50 active:scale-98 transition-all flex justify-between items-center';
+                btn.innerHTML = `<span>${opt}</span> <i class="fa-regular fa-circle text-slate-300"></i>`;
+                btn.onclick = () => checkAnswer(idx, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex, selectedBtn) {
+            const current = quizData[state.currentQuizIndex];
+            const optionsContainer = document.getElementById('quiz-options');
+            const buttons = optionsContainer.getElementsByTagName('button');
+            const feedbackEl = document.getElementById('quiz-feedback');
+
+            // Disable all buttons
+            for (let btn of buttons) {
+                btn.disabled = true;
+            }
+
+            if (selectedIndex === current.correct) {
+                // Jawaban Benar
+                playSound('correct');
+                selectedBtn.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-700');
+                selectedBtn.querySelector('i').className = 'fa-solid fa-circle-check text-emerald-500';
+                
+                feedbackEl.className = 'p-3 rounded-xl text-xs font-medium border bg-emerald-50 border-emerald-200 text-emerald-800';
+                feedbackEl.innerHTML = `<strong>Benar! 🎉</strong> ${current.explanation}`;
+                
+                state.quizScore += 10;
+                state.correctCount++;
+                addStars(5);
+                confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } });
+            } else {
+                // Jawaban Salah
+                playSound('wrong');
+                selectedBtn.classList.add('bg-rose-50', 'border-rose-500', 'text-rose-700');
+                selectedBtn.querySelector('i').className = 'fa-solid fa-circle-xmark text-rose-500';
+
+                // Highlight Correct Option
+                buttons[current.correct].classList.add('bg-emerald-50', 'border-emerald-400');
+                
+                feedbackEl.className = 'p-3 rounded-xl text-xs font-medium border bg-rose-50 border-rose-200 text-rose-800';
+                feedbackEl.innerHTML = `<strong>Kurang Tepat! 😅</strong> ${current.explanation}`;
+            }
+
+            feedbackEl.classList.remove('hidden');
+            document.getElementById('btn-next-quiz').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            playSound('click');
+            state.currentQuizIndex++;
+            state.completedQuestions++;
+
+            if (state.currentQuizIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                // Show Quiz Results
+                playSound('fanfare');
+                document.getElementById('quiz-card').classList.add('hidden');
+                document.getElementById('quiz-header').classList.add('hidden');
+                
+                const resultCard = document.getElementById('quiz-result');
+                resultCard.classList.remove('hidden');
+                
+                document.getElementById('final-score').innerText = state.quizScore;
+                document.getElementById('final-correct').innerText = `${state.correctCount}/${quizData.length}`;
+                
+                // Extra Confetti for completion
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            }
+        }
+
+        function restartQuiz() {
+            playSound('click');
+            state.currentQuizIndex = 0;
+            state.quizScore = 0;
+            state.correctCount = 0;
+            document.getElementById('quiz-card').classList.remove('hidden');
+            document.getElementById('quiz-header').classList.remove('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            loadQuestion();
+        }
+
+        // --- SCREENSHOT & WHATSAPP EXPORT LOGIC ---
+        function downloadQuizScreenshot() {
+            playSound('click');
+            const captureArea = document.getElementById('quiz-result-capture');
+            
+            // Temporary indicator
+            const originalBg = captureArea.style.backgroundColor;
+            captureArea.style.backgroundColor = '#ffffff';
+
+            html2canvas(captureArea, { scale: 2 }).then(canvas => {
+                captureArea.style.backgroundColor = originalBg;
+                
+                // Create download link
+                const image = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                const studentName = document.getElementById('student-name').value.trim() || 'Siswa';
+                
+                link.href = image;
+                link.download = `Hasil_Kuis_Numerasi_${studentName.replace(/\s+/g, '_')}.png`;
+                link.click();
+            }).catch(err => {
+                alert('Gagal mengambil tangkapan layar. Silakan coba lagi.');
+            });
+        }
+
+        function sendQuizToWhatsApp() {
+            playSound('click');
+            const studentName = document.getElementById('student-name').value.trim();
+            
+            if (!studentName) {
+                alert('Silakan isi nama kamu terlebih dahulu!');
+                document.getElementById('student-name').focus();
+                return;
+            }
+
+            const captureArea = document.getElementById('quiz-result-capture');
+            const originalBg = captureArea.style.backgroundColor;
+            captureArea.style.backgroundColor = '#ffffff';
+
+            // Otomatis buat & unduh screenshot dulu
+            html2canvas(captureArea, { scale: 2 }).then(canvas => {
+                captureArea.style.backgroundColor = originalBg;
+                
+                const image = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                const cleanName = studentName.replace(/\s+/g, '_');
+                
+                link.href = image;
+                link.download = `Hasil_Kuis_Numerasi_${cleanName}.png`;
+                link.click();
+
+                // Buka WhatsApp dengan teks pesan instruksi melampirkan screenshot yang telah terunduh
+                const textMessage = `Halo Bapak/Ibu Guru,%0A%0ABerikut laporan hasil Latihan Kuis Numerasi Kelas 5B SD NEGERI MIAWA:%0A👤 *Nama Siswa:* ${encodeURIComponent(studentName)}%0A🎯 *Skor Akhir:* ${state.quizScore}%0A✅ *Jawaban Benar:* ${state.correctCount}/10%0A%0A📸 *Gambar screenshot hasil skor telah tersimpan di HP saya dan saya lampirkan bersama pesan ini.* 🙏`;
+                
+                setTimeout(() => {
+                    window.open(`https://api.whatsapp.com/send?text=${textMessage}`, '_blank');
+                }, 800);
+            }).catch(err => {
+                captureArea.style.backgroundColor = originalBg;
+                // Fallback jika screenshot gagal
+                const textMessage = `Halo Bapak/Ibu Guru,%0A%0ABerikut laporan hasil Latihan Kuis Numerasi Kelas 5B SD NEGERI MIAWA:%0A👤 *Nama Siswa:* ${encodeURIComponent(studentName)}%0A🎯 *Skor Akhir:* ${state.quizScore}%0A✅ *Jawaban Benar:* ${state.correctCount}/10%0A%0AMohon dicek ya Pak/Bu, terima kasih! 🙏`;
+                window.open(`https://api.whatsapp.com/send?text=${textMessage}`, '_blank');
+            });
+        }
+
+        // --- MINI GAME LOGIC ---
+        function startGame() {
+            playSound('click');
+            state.gameScore = 0;
+            state.gameTimer = 20;
+            state.gameActive = true;
+            
+            document.getElementById('game-points').innerText = state.gameScore;
+            document.getElementById('btn-start-game').disabled = true;
+            document.getElementById('btn-start-game').classList.add('opacity-50');
+
+            generateGameQuestion();
+
+            // Timer Loop
+            clearInterval(state.gameInterval);
+            state.gameInterval = setInterval(() => {
+                state.gameTimer--;
+                document.getElementById('game-timer').innerText = `Waktu: ${state.gameTimer}s`;
+
+                if (state.gameTimer <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function generateGameQuestion() {
+            if (!state.gameActive) return;
+
+            const board = document.getElementById('game-board');
+            board.innerHTML = '';
+
+            const questionBox = document.getElementById('game-question-box');
+            questionBox.className = "bg-purple-900 text-yellow-300 rounded-xl p-4 text-center font-display text-2xl font-bold shadow-inner transition-all duration-200";
+
+            // Perkalian khusus 3 sampai 9
+            const num1 = Math.floor(Math.random() * 7) + 3; // 3 to 9
+            const num2 = Math.floor(Math.random() * 10) + 1; // 1 to 10
+            state.currentCorrectGameAns = num1 * num2;
+
+            questionBox.innerText = `${num1} x ${num2} = ?`;
+
+            const options = [state.currentCorrectGameAns];
+            while (options.length < 4) {
+                const wrongAns = state.currentCorrectGameAns + (Math.floor(Math.random() * 12) - 6);
+                if (wrongAns > 0 && !options.includes(wrongAns)) {
+                    options.push(wrongAns);
+                }
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            options.forEach(val => {
+                const btn = document.createElement('button');
+                btn.className = 'h-14 bg-purple-50 border-2 border-purple-200 rounded-xl font-display text-lg font-bold text-purple-700 active:scale-95 transition-all flex items-center justify-center';
+                btn.innerText = val;
+                btn.onclick = () => handleGameClick(val, btn);
+                board.appendChild(btn);
+            });
+        }
+
+        function handleGameClick(selectedVal, btn) {
+            if (!state.gameActive) return;
+
+            const questionBox = document.getElementById('game-question-box');
+
+            // Disable buttons temporarily during animation
+            const boardButtons = document.getElementById('game-board').getElementsByTagName('button');
+            for (let b of boardButtons) {
+                b.disabled = true;
+            }
+
+            if (selectedVal === state.currentCorrectGameAns) {
+                playSound('correct');
+                state.gameScore += 10;
+                addStars(2);
+                
+                // Animation for Correct Answer
+                btn.className = 'h-14 bg-emerald-500 text-white rounded-xl font-display text-lg font-bold transition-all anim-correct shadow-lg shadow-emerald-500/40';
+                questionBox.className = "bg-emerald-600 text-white rounded-xl p-4 text-center font-display text-2xl font-bold shadow-inner anim-correct";
+                questionBox.innerText = "BENAR! 🎉";
+
+                confetti({ particleCount: 15, spread: 40, origin: { y: 0.7 } });
+            } else {
+                playSound('wrong');
+                // Animation for Wrong Answer
+                btn.className = 'h-14 bg-rose-500 text-white rounded-xl font-display text-lg font-bold transition-all anim-wrong shadow-lg shadow-rose-500/40';
+                questionBox.className = "bg-rose-600 text-white rounded-xl p-4 text-center font-display text-2xl font-bold shadow-inner anim-wrong";
+                questionBox.innerText = `SALAH! (${state.currentCorrectGameAns})`;
+            }
+            
+            document.getElementById('game-points').innerText = state.gameScore;
+            setTimeout(generateGameQuestion, 600);
+        }
+
+        function endGame() {
+            clearInterval(state.gameInterval);
+            state.gameActive = false;
+            playSound('fanfare');
+            
+            document.getElementById('btn-start-game').disabled = false;
+            document.getElementById('btn-start-game').classList.remove('opacity-50');
+            
+            document.getElementById('game-question-box').innerText = "Waktu Habis!";
+            document.getElementById('game-question-box').className = "bg-purple-900 text-yellow-300 rounded-xl p-4 text-center font-display text-2xl font-bold shadow-inner";
+            
+            const board = document.getElementById('game-board');
+            board.innerHTML = `<div class="col-span-2 text-center py-4 bg-purple-50 rounded-2xl border border-purple-200">
+                <h4 class="font-display font-bold text-purple-800 text-base">Permainan Selesai!</h4>
+                <p class="text-xs text-purple-600 mt-1">Total Skor Tantangan Cepat: <strong>${state.gameScore}</strong></p>
+            </div>`;
+        }
+
+        // --- GLOBAL HELPER FUNCTIONS ---
+        function addStars(count) {
+            state.score += count;
+            document.getElementById('user-score').innerText = state.score;
+        }
+
+        // Init App & Audio Resume listener
+        window.onload = function() {
+            // Enable audio context on first touch/click
+            document.body.addEventListener('click', function() {
+                getAudioContext();
+            }, { once: true });
+        };
+    </script>
+</body>
+</html>
